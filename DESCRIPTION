@@ -10,7 +10,9 @@ License: What license is it under?
 Depends:
   R (>= 3.0.2),
   XML,
-  RCurl
+  RCurl,
+  dplyr,
+  lpSolveAPI
 Suggests:
   testthat
 LazyData: TRUE
