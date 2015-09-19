@@ -19,6 +19,7 @@
 #                  AvgSteal=c(3,3,3,1,3,1,2,2,3,3,1,2,0),
 #                  Salary=c(930,900,1300,970,910,920,980,900,920,930,910,900,800))
 
+#' @export
 rosterOpt <- function(DF) {
   lprec <- make.lp(0, nrow(DF))
 
