@@ -20,11 +20,17 @@
 #                  Salary=c(930,900,1300,970,910,920,980,900,920,930,910,900,800))
 
 #' @export
-rosterOpt <- function(DF) {
+rosterOpt <- function(DF, type='MaxPoint') {
   lprec <- make.lp(0, nrow(DF))
 
-  set.objfn(lprec, DF$Point + 0.5 * DF$Made3Pt + 1.25 * DF$Rebound + 1.5 * DF$Assist + 2 * DF$Steal + 2 * DF$Block -
+  if (type == 'MaxPoint')
+    set.objfn(lprec, DF$Points + 0.5 * DF$ThreePts + 1.25 * DF$TotRB +
+                   1.5 * DF$Assist + 2 * DF$Steal + 2 * DF$Block -
                    0.5 * DF$Turnover)
+  else
+    set.objfn(lprec, DF$Points/DF$Points.SD + 0.5 * DF$ThreePts/DF$ThreePts.SD + 1.25 * DF$TotRB/DF$TotRB.SD +
+                1.5 * DF$Assist/DF$Assist.SD + 2 * DF$Steal/DF$Steal.SD + 2 * DF$Block/DF$Block.SD -
+                0.5 * DF$Turnover/DF$Turnover.SD)
 
 #   dd_tt <- function(key, DF) {
 #     otherObj <- DF[, !colnames(DF) %in% key]
@@ -48,12 +54,12 @@ rosterOpt <- function(DF) {
   add.constraint(lprec, DF$Salary, "<=", 50000)
 
   # one player for each role
-  add.constraint(lprec, ifelse(DF$Position == 'PG', 1, 0), '<=', 2)
-  add.constraint(lprec, ifelse(DF$Position == 'SG', 1, 0), '<=', 2)
-  add.constraint(lprec, ifelse(DF$Position == 'PF', 1, 0), '<=', 2)
-  add.constraint(lprec, ifelse(DF$Position == 'C', 1, 0), '<=', 2)
-  add.constraint(lprec, ifelse(DF$Position == 'SF', 1, 0), '<=', 2)
-  add.constraint(lprec, ifelse(DF$Position == 'G', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'PG', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'SG', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'PF', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'C', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'SF', 1, 0), '<=', 2)
+  add.constraint(lprec, ifelse(DF$Pos == 'G', 1, 0), '<=', 2)
 
   set.bounds(lprec, lower=rep(0, nrow(DF)), upper=rep(1, nrow(DF)))
 
